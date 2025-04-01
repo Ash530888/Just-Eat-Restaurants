@@ -1,8 +1,6 @@
 Run dependencies.sh in your teminal/command line before progressing to ensure Node.js, npm, and dependencies in package.json are all installed.
 
-## Available Scripts
-
-In the project directory, run:
+Then in the project directory, run:
 
 ### `node server.js`
 
