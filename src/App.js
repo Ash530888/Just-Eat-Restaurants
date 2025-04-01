@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { motion } from "framer-motion";
 
-import pizzaIcon from "./assets/pizza.png";
-import burgerIcon from "./assets/burger.png";
-import chineseIcon from "./assets/chinese.png";
-import dessertIcon from "./assets/dessert.png";
-import takeawayIcon from "./assets/takeaway.png";
+import plate1 from "./assets/plate1.png";
+import plate2 from "./assets/plate2.png";
+import plate3 from "./assets/plate3.png";
+import plate4 from "./assets/plate4.png";
+import plate5 from "./assets/plate5.png";
+import plate6 from "./assets/plate6.png";
 
+const plateImages = [plate1, plate2, plate3, plate4, plate5, plate6];
 
 const fetchRestaurants = async (postcode) => {
   try {
@@ -25,9 +27,8 @@ const fetchRestaurants = async (postcode) => {
   }
 };
 
-const RestaurantCard = ({ restaurant }) => {
+const Plate = ({ restaurant, plateImage }) => {
   const [expanded, setExpanded] = useState(false);
-  const cuisineImage = getCuisineImage(restaurant.cuisines);
 
   return (
     <motion.div 
@@ -39,37 +40,37 @@ const RestaurantCard = ({ restaurant }) => {
       onClick={() => setExpanded(!expanded)}
     >
       <div className="card-image">
-        <img src={cuisineImage} alt="Cuisine" />
+        <img src={plateImage} alt="plate" />
       </div>
       
-      <p>⭐ {restaurant.rating.starRating} <soft>({restaurant.rating.count})</soft></p>
-      <h3>{restaurant.name}</h3>
-      {expanded && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <p><strong>Cuisines:</strong> {restaurant.cuisines.map(c => c.name).join(", ")}</p>
-          <p><strong>Address:</strong> {restaurant.address.city}, {restaurant.address.firstLine}, {restaurant.address.postalCode}</p>
-        </motion.div>
-      )}
+      {/* Card Text */}
+      <div className="card-content">
+        <p>⭐ {restaurant.rating.starRating} <soft>({restaurant.rating.count})</soft></p>
+        <h3>{restaurant.name}</h3>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p><strong>Cuisines:</strong> {restaurant.cuisines.map(c => c.name).join(", ")}</p>
+            <p><strong>Address:</strong> {restaurant.address.city}, {restaurant.address.firstLine}, {restaurant.address.postalCode}</p>
+          </motion.div>
+        )}
+      </div>
     </motion.div>
   );
 };
 
-
-const getCuisineImage = (cuisines) => {
-  const cuisineNames = cuisines.map(c => c.name.toLowerCase());
-
-  if (cuisineNames.includes("pizza")) return pizzaIcon;
-  if (cuisineNames.includes("burgers")) return burgerIcon;
-  if (cuisineNames.includes("chinese") || cuisineNames.includes("noodles")) return chineseIcon;
-  if (cuisineNames.includes("dessert")) return dessertIcon;
-
-  return takeawayIcon; // Default image
+const getPlateImage = () => {
+  const randomIndex = Math.floor(Math.random() * plateImages.length);
+  return plateImages[randomIndex];
 };
 
+const getRandomEmptyCell = (restaurants) => {
+  // Randomly decide if a cell should be empty
+  return Math.random() < 0.4 ? null : restaurants[Math.floor(Math.random() * restaurants.length)];
+};
 
 function App() {
   const [restaurants, setRestaurants] = useState([]);
@@ -100,6 +101,15 @@ function App() {
       (selectedRating ? roundedRating === parseInt(selectedRating) : true)
     );
   });
+
+  // grid of plates with random empty cells
+  const shuffledRestaurants = [...filteredRestaurants];
+  const gridLayout = [];
+
+  // 5x5 grid layout with some empty cells
+  for (let i = 0; i < 25; i++) {
+    gridLayout.push(getRandomEmptyCell(shuffledRestaurants));
+  }
 
   return (
     <div className="App">
@@ -143,11 +153,15 @@ function App() {
 
       {/* Restaurant Table */}
       <div className="restaurant-list">
-        {filteredRestaurants.length > 0 ? (
-          filteredRestaurants.map((r, index) => <RestaurantCard key={index} restaurant={r} />)
-        ) : (
-          <p>No restaurants found</p>
-        )}
+        {gridLayout.map((item, index) => (
+          <div key={index} className="card-container">
+            {item ? (
+              <Plate key={index} restaurant={item} plateImage={getPlateImage()} />
+            ) : (
+              <div className="empty-cell"></div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
