@@ -139,10 +139,22 @@ const getPlateImage = () => {
   return plateImages[randomIndex];
 };
 
-const getRandomEmptyCell = (restaurants) => {
-  // Randomly decide if a cell should be empty
-  return Math.random() < 0.4 ? null : restaurants[Math.floor(Math.random() * restaurants.length)];
-};
+const insertRandomEmptyCells = (restaurants) => {
+  const newRestaurantsArray = [];
+
+  restaurants.forEach(restaurant => {
+
+    newRestaurantsArray.push(restaurant);
+    const emptyCellsCount = Math.floor(Math.random() * 6);  
+
+    // Insert empty cells
+    for (let i = 0; i < emptyCellsCount; i++) {
+      newRestaurantsArray.push(null);  // Add empty cell
+    }
+  });
+
+  return newRestaurantsArray;
+}
 
 function App() {
   const [restaurants, setRestaurants] = useState([]);
@@ -181,53 +193,60 @@ function App() {
   });
 
   // grid of plates with random empty cells
-  const shuffledRestaurants = [...filteredRestaurants];
-  const gridLayout = [];
+  const gridLayout = insertRandomEmptyCells(filteredRestaurants);
 
-  // 5x5 grid layout with some empty cells
-  for (let i = 0; i < 25; i++) {
-    gridLayout.push(getRandomEmptyCell(shuffledRestaurants));
-  }
+  
 
   return (
     <div className="App">
       <h1>Take Your Pick From The Virtual Table</h1>
 
       {/* Postcode Search Box */}
-      <label>Enter Postcode: </label>
-      <input 
-        type="text" 
-        placeholder="e.g., CT1 2EH" 
-        value={postcode} 
-        onChange={(e) => setPostcode(e.target.value.toUpperCase())}
-      />
+      <div className="filter-group">
+        <label>Enter Postcode: </label>
+        <input 
+          type="text" 
+          placeholder="e.g., CT1 2EH" 
+          value={postcode} 
+          onChange={(e) => setPostcode(e.target.value.toUpperCase())}
+        />
+      </div>
 
       {/* Restaurant Name Search */}
-      <label>Search Restaurant: </label>
-      <input 
-        type="text" 
-        placeholder="Search by name..." 
-        value={searchQuery} 
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
+      <div className="filter-group">
+        <label>Search Restaurant: </label>
+        <input 
+          type="text" 
+          placeholder="Search by name..." 
+          value={searchQuery} 
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+      
 
       {/* Cuisine Dropdown */}
-      <label>Filter by Cuisine: </label>
-      <select value={selectedCuisine} onChange={(e) => setSelectedCuisine(e.target.value)}>
-        <option value="">All</option>
-        {uniqueCuisines.map((cuisine, index) => (
-          <option key={index} value={cuisine}>{cuisine}</option>
-        ))}
-      </select>
+      <div className="filter-group">
+        <label>Filter by Cuisine: </label>
+        <select value={selectedCuisine} onChange={(e) => setSelectedCuisine(e.target.value)}>
+          <option value="">All</option>
+          {uniqueCuisines.map((cuisine, index) => (
+            <option key={index} value={cuisine}>{cuisine}</option>
+          ))}
+        </select>
+      </div>
+      
 
       {/* Rating Dropdown */}
-      <label>Filter by Rating: </label>
-      <select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
-        <option value="">All</option>
-        {ratingOptions.map((rating) => (
-          <option key={rating} value={rating}>{rating} Stars</option>
-        ))}
-      </select>
+      <div className="filter-group">
+        <label>Filter by Rating: </label>
+        <select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
+          <option value="">All</option>
+          {ratingOptions.map((rating) => (
+            <option key={rating} value={rating}>{rating} Stars</option>
+          ))}
+        </select>
+      </div>
+      
 
       {/* Restaurant Table */}
       <div className="restaurant-list">

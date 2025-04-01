@@ -1,9 +1,41 @@
 .App {
-  text-align: center;
-  font-family: Arial, sans-serif;
-  max-width: 1000px;
-  margin: auto;
-  padding: 20px;
+  min-height: 100vh;
+  padding: 2rem;
+  background-image: url('assets/grass.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.App::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/grass.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.9;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+label {
+  color: white;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+input, select {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  min-width: 200px;
 }
 
 /* Wider grid layout for plates */
@@ -91,6 +123,77 @@
   width: 100%;
   height: 100%;
   border-radius: 15px;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.modal-plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-info {
+  position: absolute;
+  bottom: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.modal-info h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.modal-info p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.close-button {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  background: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive design */
