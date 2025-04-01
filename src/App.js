@@ -19,27 +19,75 @@ const fetchRestaurants = async (postcode) => {
 
 function App() {
   const [restaurants, setRestaurants] = useState([]);
-  const [postcode, setPostcode] = useState("CT1 2EH");
+  const [postcode, setPostcode] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCuisine, setSelectedCuisine] = useState("");
+  const [selectedRating, setSelectedRating] = useState("");
 
   useEffect(() => {
-    fetchRestaurants(postcode).then(setRestaurants);
+    if (postcode) {
+      fetchRestaurants(postcode).then(setRestaurants);
+    }
   }, [postcode]);
+
+  // Extract unique cuisines
+  const uniqueCuisines = [...new Set(restaurants.flatMap(r => r.cuisines.map(c => c.name)))];
+
+  // Define fixed rating options (1 to 5)
+  const ratingOptions = [1, 2, 3, 4, 5];
+
+  // Apply filters
+  const filteredRestaurants = restaurants.filter(r => {
+    const roundedRating = Math.floor(r.rating?.starRating || 0);
+
+    return (
+      r.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (selectedCuisine ? r.cuisines.some(c => c.name === selectedCuisine) : true) &&
+      (selectedRating ? roundedRating === parseInt(selectedRating) : true)
+    );
+  });
 
   return (
     <div className="App">
-      <h1>Restaurant Listings</h1>
-      
-      {/* Postcode Input */}
-      <label>
-        Enter Postcode:
-        <input 
-          type="text" 
-          value={postcode} 
-          onChange={(e) => setPostcode(e.target.value)}
-        />
-      </label>
+      <h1>Restaurant Finder</h1>
 
-      {/* Table for displaying restaurants */}
+      {/* Postcode Search Box */}
+      <label>Enter Postcode: </label>
+      <input 
+        type="text" 
+        placeholder="e.g., CT1 2EH" 
+        value={postcode} 
+        onChange={(e) => setPostcode(e.target.value.toUpperCase())}
+      />
+
+      {/* Restaurant Name Search */}
+      <label>Search Restaurant: </label>
+      <input 
+        type="text" 
+        placeholder="Search by name..." 
+        value={searchQuery} 
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
+      {/* Cuisine Dropdown */}
+      <label>Filter by Cuisine: </label>
+      <select value={selectedCuisine} onChange={(e) => setSelectedCuisine(e.target.value)}>
+        <option value="">All</option>
+        {uniqueCuisines.map((cuisine, index) => (
+          <option key={index} value={cuisine}>{cuisine}</option>
+        ))}
+      </select>
+
+      {/* Rating Dropdown */}
+      <label>Filter by Rating: </label>
+      <select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
+        <option value="">All</option>
+        {ratingOptions.map((rating) => (
+          <option key={rating} value={rating}>{rating} Stars</option>
+        ))}
+      </select>
+
+      {/* Restaurant Table */}
       <table border="1">
         <thead>
           <tr>
@@ -50,13 +98,13 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {restaurants.length > 0 ? (
-            restaurants.map((restaurant, index) => (
+          {filteredRestaurants.length > 0 ? (
+            filteredRestaurants.map((restaurant, index) => (
               <tr key={index}>
                 <td>{restaurant.name}</td>
-                <td>{restaurant.cuisines.map(cuisine => cuisine.name).join(", ")}</td>
-                <td>{restaurant.rating?.starRating || "N/A"}, {restaurant.rating?.count || "N/A"}</td>
-                <td>{restaurant.address.city}, {restaurant.address.firstLine}, {restaurant.address.postalCode}</td>
+                <td>{restaurant.cuisines.map(c => c.name).join(", ")}</td>
+                <td>{restaurant.rating?.starRating || "N/A"}</td>
+                <td>{restaurant.address.firstLine}, {restaurant.address.postalCode}</td>
               </tr>
             ))
           ) : (
