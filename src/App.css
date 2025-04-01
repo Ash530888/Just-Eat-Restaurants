@@ -60,12 +60,22 @@
 .card {
   background: white;
   border: 2px solid #ddd;
-  border-radius: 15px;  /* Curved edges */
+  border-radius: 15px;
   padding: 15px;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  text-align: center;
 }
+
+/* Image styling */
+.card-image img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
 
 /* Hover effect */
 .card:hover {

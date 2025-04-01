@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { motion } from "framer-motion";
 
+import pizzaIcon from "./assets/pizza.png";
+import burgerIcon from "./assets/burger.png";
+import chineseIcon from "./assets/chinese.png";
+import dessertIcon from "./assets/dessert.png";
+import takeawayIcon from "./assets/takeaway.png";
+
 
 const fetchRestaurants = async (postcode) => {
   try {
@@ -21,6 +27,7 @@ const fetchRestaurants = async (postcode) => {
 
 const RestaurantCard = ({ restaurant }) => {
   const [expanded, setExpanded] = useState(false);
+  const cuisineImage = getCuisineImage(restaurant.cuisines);
 
   return (
     <motion.div 
@@ -31,6 +38,9 @@ const RestaurantCard = ({ restaurant }) => {
       transition={{ duration: 0.3 }}
       onClick={() => setExpanded(!expanded)}
     >
+      <div className="card-image">
+        <img src={cuisineImage} alt="Cuisine" />
+      </div>
       
       <p>⭐ {restaurant.rating.starRating} <soft>({restaurant.rating.count})</soft></p>
       <h3>{restaurant.name}</h3>
@@ -47,6 +57,19 @@ const RestaurantCard = ({ restaurant }) => {
     </motion.div>
   );
 };
+
+
+const getCuisineImage = (cuisines) => {
+  const cuisineNames = cuisines.map(c => c.name.toLowerCase());
+
+  if (cuisineNames.includes("pizza")) return pizzaIcon;
+  if (cuisineNames.includes("burgers")) return burgerIcon;
+  if (cuisineNames.includes("chinese") || cuisineNames.includes("noodles")) return chineseIcon;
+  if (cuisineNames.includes("dessert")) return dessertIcon;
+
+  return takeawayIcon; // Default image
+};
+
 
 function App() {
   const [restaurants, setRestaurants] = useState([]);
@@ -120,8 +143,8 @@ function App() {
 
       {/* Restaurant Table */}
       <div className="restaurant-list">
-        {restaurants.length > 0 ? (
-          restaurants.map((r, index) => <RestaurantCard key={index} restaurant={r} />)
+        {filteredRestaurants.length > 0 ? (
+          filteredRestaurants.map((r, index) => <RestaurantCard key={index} restaurant={r} />)
         ) : (
           <p>No restaurants found</p>
         )}
