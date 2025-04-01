@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import { motion } from "framer-motion";
+
 
 const fetchRestaurants = async (postcode) => {
   try {
@@ -15,6 +17,35 @@ const fetchRestaurants = async (postcode) => {
     console.error("Error fetching data:", error);
     return [];
   }
+};
+
+const RestaurantCard = ({ restaurant }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <motion.div 
+      className="card"
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      onClick={() => setExpanded(!expanded)}
+    >
+      
+      <p>⭐ {restaurant.rating.starRating} <soft>({restaurant.rating.count})</soft></p>
+      <h3>{restaurant.name}</h3>
+      {expanded && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <p><strong>Cuisines:</strong> {restaurant.cuisines.map(c => c.name).join(", ")}</p>
+          <p><strong>Address:</strong> {restaurant.address.city}, {restaurant.address.firstLine}, {restaurant.address.postalCode}</p>
+        </motion.div>
+      )}
+    </motion.div>
+  );
 };
 
 function App() {
@@ -88,32 +119,13 @@ function App() {
       </select>
 
       {/* Restaurant Table */}
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Cuisines</th>
-            <th>Rating</th>
-            <th>Address</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRestaurants.length > 0 ? (
-            filteredRestaurants.map((restaurant, index) => (
-              <tr key={index}>
-                <td>{restaurant.name}</td>
-                <td>{restaurant.cuisines.map(c => c.name).join(", ")}</td>
-                <td>{restaurant.rating?.starRating || "N/A"}</td>
-                <td>{restaurant.address.firstLine}, {restaurant.address.postalCode}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4">No restaurants found.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div className="restaurant-list">
+        {restaurants.length > 0 ? (
+          restaurants.map((r, index) => <RestaurantCard key={index} restaurant={r} />)
+        ) : (
+          <p>No restaurants found</p>
+        )}
+      </div>
     </div>
   );
 }
