@@ -17,6 +17,11 @@
   opacity: 0.9;
 }
 
+.custom-cursor {
+  cursor: url('assets/restaurant.png') 16 16, auto; /* Hotspot at 16,16 px */
+}
+
+
 .filters {
   display: flex;
   gap: 1rem;

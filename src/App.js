@@ -47,7 +47,7 @@ const Plate = ({ restaurant, plateImage, onClick }) => {
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
     >
-      <div className="card-image">
+      <div className="card-image custom-cursor">
         <img src={plateImage} alt="plate" />
       </div>
       
@@ -198,7 +198,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Take Your Pick From The Virtual Table</h1>
+      <h1>Take Your Pick!</h1>
 
       <div className="filters">
         {/* Postcode Search Box */}
