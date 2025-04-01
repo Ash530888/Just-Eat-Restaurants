@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";  // Import AnimatePresence
 
 import plate1 from "./assets/plate1.png";
 import plate2 from "./assets/plate2.png";
 import plate3 from "./assets/plate3.png";
 import plate4 from "./assets/plate4.png";
 import plate5 from "./assets/plate5.png";
-import plate6 from "./assets/plate6.png";
 
-const plateImages = [plate1, plate2, plate3, plate4, plate5, plate6];
+const plateImages = [plate1, plate2, plate3, plate4, plate5];
 
 const fetchRestaurants = async (postcode) => {
   try {
@@ -27,8 +26,15 @@ const fetchRestaurants = async (postcode) => {
   }
 };
 
-const Plate = ({ restaurant, plateImage }) => {
+
+
+const Plate = ({ restaurant, plateImage, onClick }) => {
   const [expanded, setExpanded] = useState(false);
+
+  const handleClick = (e) => {
+    e.stopPropagation(); // Prevents the event from propagating up to parent elements, but may need to be removed for debugging
+    onClick(restaurant, plateImage);  // This should be triggered when a plate is clicked
+  };
 
   return (
     <motion.div 
@@ -37,13 +43,14 @@ const Plate = ({ restaurant, plateImage }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      onClick={() => setExpanded(!expanded)}
+      onClick={handleClick}  // Ensure onClick is attached
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
     >
       <div className="card-image">
         <img src={plateImage} alt="plate" />
       </div>
       
-      {/* Card Text */}
       <div className="card-content">
         <p>⭐ {restaurant.rating.starRating} <soft>({restaurant.rating.count})</soft></p>
         <h3>{restaurant.name}</h3>
@@ -62,6 +69,71 @@ const Plate = ({ restaurant, plateImage }) => {
   );
 };
 
+
+const Modal = ({ restaurant, plateImage, onClose }) => {
+
+  return (
+    <motion.div 
+      className="modal-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div 
+        className="modal-content"
+        initial={{ scale: 0.5, y: 100 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.5, y: 100 }}
+        onClick={e => e.stopPropagation()}
+      >
+        <motion.div 
+          className="utensil fork"
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        />
+        
+        <motion.div 
+          className="modal-plate"
+          initial={{ rotate: -180 }}
+          animate={{ rotate: 0 }}
+          transition={{ type: "spring", duration: 1 }}
+        >
+          <img src={plateImage} alt="plate" />
+        </motion.div>
+        
+        <motion.div 
+          className="utensil knife"
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        />
+
+        <motion.div 
+          className="modal-info"
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h2>{restaurant.name}</h2>
+          <p>⭐ {restaurant.rating?.starRating || "N/A"} ({restaurant.rating?.count || "N/A"} reviews)</p>
+          <p>
+            <strong>Cuisines:</strong> 
+            {restaurant.cuisines && restaurant.cuisines.length > 0
+              ? restaurant.cuisines.map(c => c.name).join(", ")
+              : "N/A"}
+          </p>
+          <p><strong>Address:</strong> {restaurant.address.firstLine}, {restaurant.address.city}, {restaurant.address.postalCode}</p>
+        </motion.div>
+
+        <button className="close-button" onClick={onClose}>×</button>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+
 const getPlateImage = () => {
   const randomIndex = Math.floor(Math.random() * plateImages.length);
   return plateImages[randomIndex];
@@ -78,6 +150,12 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCuisine, setSelectedCuisine] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null) ;
+
+  const handleSelectRestaurant = (restaurant, plateImage) => {
+    console.log("Selected restaurant:", { restaurant, plateImage });
+    setSelectedRestaurant({ restaurant, plateImage });
+  };
 
   useEffect(() => {
     if (postcode) {
@@ -113,7 +191,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Restaurant Finder</h1>
+      <h1>Take Your Pick From The Virtual Table</h1>
 
       {/* Postcode Search Box */}
       <label>Enter Postcode: </label>
@@ -156,13 +234,27 @@ function App() {
         {gridLayout.map((item, index) => (
           <div key={index} className="card-container">
             {item ? (
-              <Plate key={index} restaurant={item} plateImage={getPlateImage()} />
+              <Plate 
+                restaurant={item} 
+                plateImage={getPlateImage()} 
+                onClick={() => handleSelectRestaurant(item, getPlateImage())}
+              />
             ) : (
               <div className="empty-cell"></div>
             )}
           </div>
         ))}
       </div>
+
+      <AnimatePresence>
+        {selectedRestaurant && (
+          <Modal 
+            restaurant={selectedRestaurant.restaurant}
+            plateImage={selectedRestaurant.plateImage}
+            onClose={() => setSelectedRestaurant(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
