@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import './App.css';
+import "./App.css";
 
 const fetchRestaurants = async (postcode) => {
   try {
@@ -17,19 +17,30 @@ const fetchRestaurants = async (postcode) => {
   }
 };
 
-
 function App() {
   const [restaurants, setRestaurants] = useState([]);
-  const [postcode, setPostcode] = useState("CT1 2EH"); 
+  const [postcode, setPostcode] = useState("CT1 2EH");
 
   useEffect(() => {
     fetchRestaurants(postcode).then(setRestaurants);
   }, [postcode]);
 
   return (
-    <div>
+    <div className="App">
+      <h1>Restaurant Listings</h1>
+      
+      {/* Postcode Input */}
+      <label>
+        Enter Postcode:
+        <input 
+          type="text" 
+          value={postcode} 
+          onChange={(e) => setPostcode(e.target.value)}
+        />
+      </label>
 
-<table border="1">
+      {/* Table for displaying restaurants */}
+      <table border="1">
         <thead>
           <tr>
             <th>Name</th>
@@ -44,7 +55,7 @@ function App() {
               <tr key={index}>
                 <td>{restaurant.name}</td>
                 <td>{restaurant.cuisines.map(cuisine => cuisine.name).join(", ")}</td>
-                <td>{restaurant.rating.starRating} ({restaurant.rating.count})</td>
+                <td>{restaurant.rating?.starRating || "N/A"}, {restaurant.rating?.count || "N/A"}</td>
                 <td>{restaurant.address.city}, {restaurant.address.firstLine}, {restaurant.address.postalCode}</td>
               </tr>
             ))
