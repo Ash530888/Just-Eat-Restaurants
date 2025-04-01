@@ -52,8 +52,8 @@ const Plate = ({ restaurant, plateImage, onClick }) => {
       </div>
       
       <div className="card-content">
-        <p>⭐ {restaurant.rating.starRating} <soft>({restaurant.rating.count})</soft></p>
         <h3>{restaurant.name}</h3>
+        <p>⭐ {restaurant.rating.starRating} <soft>({restaurant.rating.count})</soft></p>
         {expanded && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -61,7 +61,6 @@ const Plate = ({ restaurant, plateImage, onClick }) => {
             transition={{ duration: 0.3 }}
           >
             <p><strong>Cuisines:</strong> {restaurant.cuisines.map(c => c.name).join(", ")}</p>
-            <p><strong>Address:</strong> {restaurant.address.city}, {restaurant.address.firstLine}, {restaurant.address.postalCode}</p>
           </motion.div>
         )}
       </div>
@@ -201,50 +200,52 @@ function App() {
     <div className="App">
       <h1>Take Your Pick From The Virtual Table</h1>
 
-      {/* Postcode Search Box */}
-      <div className="filter-group">
-        <label>Enter Postcode: </label>
-        <input 
-          type="text" 
-          placeholder="e.g., CT1 2EH" 
-          value={postcode} 
-          onChange={(e) => setPostcode(e.target.value.toUpperCase())}
-        />
-      </div>
+      <div className="filters">
+        {/* Postcode Search Box */}
+        <div className="filter-group">
+          <label>Enter Postcode: </label>
+          <input 
+            type="text" 
+            placeholder="e.g., CT1 2EH" 
+            value={postcode} 
+            onChange={(e) => setPostcode(e.target.value.toUpperCase())}
+          />
+        </div>
 
-      {/* Restaurant Name Search */}
-      <div className="filter-group">
-        <label>Search Restaurant: </label>
-        <input 
-          type="text" 
-          placeholder="Search by name..." 
-          value={searchQuery} 
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-      
+        {/* Restaurant Name Search */}
+        <div className="filter-group">
+          <label>Search Restaurant: </label>
+          <input 
+            type="text" 
+            placeholder="Search by name..." 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        
 
-      {/* Cuisine Dropdown */}
-      <div className="filter-group">
-        <label>Filter by Cuisine: </label>
-        <select value={selectedCuisine} onChange={(e) => setSelectedCuisine(e.target.value)}>
-          <option value="">All</option>
-          {uniqueCuisines.map((cuisine, index) => (
-            <option key={index} value={cuisine}>{cuisine}</option>
-          ))}
-        </select>
-      </div>
-      
+        {/* Cuisine Dropdown */}
+        <div className="filter-group">
+          <label>Filter by Cuisine: </label>
+          <select value={selectedCuisine} onChange={(e) => setSelectedCuisine(e.target.value)}>
+            <option value="">All</option>
+            {uniqueCuisines.map((cuisine, index) => (
+              <option key={index} value={cuisine}>{cuisine}</option>
+            ))}
+          </select>
+        </div>
+        
 
-      {/* Rating Dropdown */}
-      <div className="filter-group">
-        <label>Filter by Rating: </label>
-        <select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
-          <option value="">All</option>
-          {ratingOptions.map((rating) => (
-            <option key={rating} value={rating}>{rating} Stars</option>
-          ))}
-        </select>
+        {/* Rating Dropdown */}
+        <div className="filter-group">
+          <label>Filter by Rating: </label>
+          <select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
+            <option value="">All</option>
+            {ratingOptions.map((rating) => (
+              <option key={rating} value={rating}>{rating} Stars</option>
+            ))}
+          </select>
+        </div>
       </div>
       
 

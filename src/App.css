@@ -17,6 +17,15 @@
   opacity: 0.9;
 }
 
+.filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -38,6 +47,16 @@ input, select {
   min-width: 200px;
 }
 
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 2rem;
+  position: relative;
+}
+
 /* Wider grid layout for plates */
 .restaurant-list {
   display: grid;
@@ -48,7 +67,7 @@ input, select {
   margin: 0 auto;
   padding: 2rem;
   border-radius: 1rem;
-  background-image: url('assets/picnic-table.png');
+  background-image: url('assets/checkered.png');
   background-size: cover;
   background-position: center;
 }
