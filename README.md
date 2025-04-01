@@ -19,7 +19,8 @@ The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
 ## Assumptions
-- I assumed I could have some fun and not take it seriously :)
+- Can use AI's assistance (reasonably)
+- I assumed I could have some fun and doesn't have to be serious :)
 
 ## Future Improvements/Works
 - Additional Filters/toggles for specific food items: pizza, pasta, burgers, etc
